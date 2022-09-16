@@ -2,6 +2,7 @@ package com.bchmsl.task8.presentation.main
 
 import android.app.Application
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -64,7 +65,11 @@ class MainViewModel @Inject constructor(
     private fun getItemsFromLocal() {
         viewModelScope.launch {
             getDataFromLocalUseCase().collect { data ->
-                _successStateFlow.value = data.map { it.toItemModel() }
+                if (data.isEmpty()) {
+                    _errorStateFlow.value = Throwable("Items Not Found.")
+                } else {
+                    _successStateFlow.value = data.map { it.toItemModel() }
+                }
             }
         }
     }
